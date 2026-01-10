@@ -713,7 +713,6 @@ async def unlock_cmd(ctx, channel: discord.TextChannel = None):
 # =============================================================================
 # PART 4 OF 5 - Whitelist & Advanced Security Commands
 # =============================================================================
-Copy this AFTER Part 3
 
 # ============================================
 # WHITELIST COMMANDS (Slash)
