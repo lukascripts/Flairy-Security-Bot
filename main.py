@@ -868,7 +868,7 @@ async def unlockdown_cmd(ctx):
         await ctx.send(f'❌ Error: {e}')
 
 
-  @bot.command(name='antiraid')
+@bot.command(name='antiraid')
 @is_owner_or_admin()
 async def antiraid_cmd(ctx, mode: str):
     """Enable/disable anti-raid (on/off)"""
