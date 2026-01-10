@@ -710,10 +710,6 @@ async def unlock_cmd(ctx, channel: discord.TextChannel = None):
     except Exception as e:
         await ctx.send(f'❌ Error: {e}')
 
-# =============================================================================
-# PART 4 OF 5 - Whitelist & Advanced Security Commands
-# =============================================================================
-
 # ============================================
 # WHITELIST COMMANDS (Slash)
 # ============================================
@@ -721,7 +717,7 @@ async def unlock_cmd(ctx, channel: discord.TextChannel = None):
 @bot.tree.command(name="whitelist_add", description="Add user to whitelist (Owner only)")
 @is_owner()
 async def whitelist_add(interaction: discord.Interaction, user: discord.User):
-   """Add a user to whitelist"""
+    """Add a user to whitelist"""
     if data_manager.is_whitelisted(user.id):
         await interaction.response.send_message(f'ℹ️ {user.mention} is already whitelisted!', ephemeral=True)
         return
@@ -773,7 +769,7 @@ async def whitelist_list(interaction: discord.Interaction):
     user_list = []
     for user_id in data_manager.whitelist:
         user = bot.get_user(user_id)
-        user_list.append(f'• {user.mention if user else f"Unknown (`{user_id}`)"} ')
+        user_list.append(f'• {user.mention if user else f"Unknown (`{user_id}`)"}')
     
     embed = discord.Embed(title='📋 Whitelisted Users', description='\n'.join(user_list), color=discord.Color.blue())
     embed.set_footer(text=f'Total: {len(data_manager.whitelist)} users')
@@ -812,10 +808,6 @@ async def clear_violations(interaction: discord.Interaction, user: discord.User)
     
     await interaction.response.send_message(f'✅ Cleared **{violation_count}** violations for {user.mention}', ephemeral=True)
     await log_action(interaction.guild, '🗑️ Violations Cleared', f'{user.mention} violations cleared by {interaction.user.mention}', discord.Color.blue())
-
-# ============================================
-# ADVANCED SECURITY COMMANDS (Prefix)
-# ============================================
 
 # ============================================
 # FIND THE +lockdown COMMAND IN PART 4 AND REPLACE IT WITH THIS:
