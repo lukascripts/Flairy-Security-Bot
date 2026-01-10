@@ -1222,13 +1222,13 @@ async def start_keep_alive():
         </html>
         """
         return web.Response(
-    text=html.format(
-        servers=len(bot.guilds),
-        latency=round(bot.latency * 1000),
-        prefix=Config.PREFIX
-    ),
-    content_type='text/html'
-    )
+            text=html.format(
+                servers=len(bot.guilds),
+                latency=round(bot.latency * 1000),
+                prefix=Config.PREFIX
+            ),
+            content_type='text/html'
+)
     
     app = web.Application()
     app.router.add_get('/', status_page)
