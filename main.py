@@ -891,8 +891,7 @@ async def antiraid_cmd(ctx, mode: str):
         except Exception as e:
             await ctx.send(f'❌ Error: {e}')
     else:
-        await ctx.send('❌ Use `+antiraid on` or `+antiraid off`')  await msg.edit(content=f'✅ Added {role.mention} to {added} members')
-
+        await ctx.send('❌ Use `+antiraid on` or `+antiraid off`')
 
 @bot.command(name='roleall')
 @is_owner_or_admin()
@@ -909,6 +908,7 @@ async def roleall_cmd(ctx, role: discord.Role):
             except:
                 pass
     
+    await msg.edit(content=f'✅ Added {role.mention} to {added} members')
 
 @bot.command(name='unroleall')
 @is_owner_or_admin()
@@ -925,6 +925,7 @@ async def unroleall_cmd(ctx, role: discord.Role):
             pass
     
     await msg.edit(content=f'✅ Removed {role.mention} from {removed} members')
+
         
 # ============================================
 # ADD THIS NEW COMMAND AT THE END OF PART 4 (After +unroleall):
