@@ -1160,65 +1160,13 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
 # ============================================
 
 async def start_keep_alive():
-    """Start web server for Render"""
     from aiohttp import web
     
     async def health(request):
-        return web.Response(text='🛡️ Security Bot Online!', status=200)
+        return web.Response(text='Bot Online!', status=200)
     
     async def status_page(request):
-        html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>Discord Security Bot</title>
-    <meta http-equiv="refresh" content="60">
-    <style>
-        body {{
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }}
-        .container {{
-            text-align: center;
-            background: rgba(0,0,0,0.4);
-            padding: 50px;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }}
-        h1 {{ font-size: 3.5em; margin: 0; }}
-        .status {{
-            background: #10b981;
-            padding: 15px 30px;
-            border-radius: 15px;
-            display: inline-block;
-            margin: 30px 0;
-            font-size: 1.5em;
-            animation: pulse 2s infinite;
-        }}
-        @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.7; }} }}
-        .info {{ background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-top: 30px; }}
-        p {{ font-size: 1.3em; }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🛡️ Security Bot</h1>
-        <div class="status">✅ ONLINE - 24/7</div>
-        <p>Advanced Protection System</p>
-        <div class="info">
-            <p><strong>Servers:</strong> {len(bot.guilds)}</p>
-            <p><strong>Latency:</strong> {round(bot.latency * 1000)}ms</p>
-            <p><strong>Prefix:</strong> {Config.PREFIX}</p>
-            <p><strong>Platform:</strong> Render</p>
-        </div>
-    </div>
-</body>
-</html>"""
+        html = '<html><body style="background:#667eea;color:white;text-align:center;padding:50px;"><h1>Security Bot ONLINE</h1><p>Servers: ' + str(len(bot.guilds)) + '</p><p>Prefix: ' + Config.PREFIX + '</p></body></html>'
         return web.Response(text=html, content_type='text/html')
     
     app = web.Application()
@@ -1230,41 +1178,35 @@ async def start_keep_alive():
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', Config.PORT)
     await site.start()
-    
-    print(f'🌐 Web server running on port {Config.PORT}')
-
-# ============================================
-# RUN THE BOT
-# ============================================
+    print(f'Web server running on port {Config.PORT}')
 
 async def main():
-    """Main function"""
     await start_keep_alive()
-    
     try:
         await bot.start(Config.TOKEN)
     except KeyboardInterrupt:
         await bot.close()
     except Exception as e:
-        print(f'❌ Bot error: {e}')
+        print(f'Bot error: {e}')
         await bot.close()
+
+# bot code run
 
 if __name__ == '__main__':
     print('=' * 70)
-    print('🚀 DISCORD ADVANCED SECURITY BOT')
+    print('DISCORD SECURITY BOT STARTING')
     print('=' * 70)
     print(f'Owner: {Config.OWNER_ID}')
     print(f'Prefix: {Config.PREFIX}')
     print(f'Port: {Config.PORT}')
-    print('Starting 24/7 deployment...')
     print('=' * 70)
     
     if not Config.TOKEN:
-        print('❌ ERROR: DISCORD_BOT_TOKEN not set!')
-        print('Set it in Render: Environment > Add Variable')
+        print('ERROR: DISCORD_BOT_TOKEN not set!')
+        print('Set it in Render Environment Variables')
         exit(1)
     
     try:
         asyncio.run(main())
     except Exception as e:
-        print(f'❌ Failed: {e}')
+        print(f'Failed to start: {e}')
