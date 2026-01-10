@@ -1003,12 +1003,6 @@ async def removestaffrole_cmd(ctx):
         f'Staff role removed by {ctx.author.mention}',
         discord.Color.orange())
 
-=============================================================================
-PART 5 OF 5 - Help, Utility Commands & Render 24/7 Server
-=============================================================================
-Copy this AFTER Part 4 - THIS IS THE FINAL PART!
-"""
-
 # ============================================
 # HELP COMMANDS
 # ============================================
@@ -1025,55 +1019,42 @@ async def help_cmd(ctx):
         color=discord.Color.blue()
     )
     
-    # Verification commands
     if is_owner_user:
         embed.add_field(
             name='🔐 Verification (Slash)',
-            value='`/setup_verification` - Setup system\n'
-                  '`/send_verification` - Send panel\n'
-                  '`/verify_user` - Manually verify',
+            value='`/setup_verification` - Setup system\n`/send_verification` - Send panel\n`/verify_user` - Manually verify',
             inline=False
         )
     
-    # Moderation commands
     if is_admin or is_owner_user:
         embed.add_field(
             name='⚙️ Moderation',
-            value='`+kick` `+ban` `+unban` `+timeout` `+untimeout`\n'
-                  '`+warn` `+purge` `+slowmode` `+lock` `+unlock`',
+            value='`+kick` `+ban` `+unban` `+timeout` `+untimeout`\n`+warn` `+purge` `+slowmode` `+lock` `+unlock`',
             inline=False
         )
         
         embed.add_field(
             name='🛡️ Advanced Security',
-            value='`+lockdown` `+unlockdown` +antiraid`\n'
-                   `+roleall` `+unroleall`',
+            value='`+lockdown` `+unlockdown` `+antiraid`\n`+roleall` `+unroleall`',
             inline=False
         )
     
-    # Whitelist commands (owner only)
     if is_owner_user:
         embed.add_field(
             name='📋 Whitelist (Slash)',
-            value='`/whitelist_add` `/whitelist_remove` `/whitelist_list`\n'
-                  '`/view_violations` `/clear_violations`',
+            value='`/whitelist_add` `/whitelist_remove` `/whitelist_list`\n`/view_violations` `/clear_violations`',
             inline=False
         )
     
-    # Utility commands
     embed.add_field(
         name='🔧 Utility',
-        value='`+ping` `+serverinfo` `+userinfo` `+avatar`\n'
-              '`+botinfo` `+status`',
+        value='`+ping` `+serverinfo` `+userinfo` `+avatar`\n`+botinfo` `+status`',
         inline=False
     )
     
-    # Info
     embed.add_field(
         name='ℹ️ Auto Protection',
-        value='✅ Anti-Nuke | ✅ Anti-Raid | ✅ Anti-Spam (10 msgs)\n'
-              '✅ Auto Verification | ✅ Less Strict Automod',
-              '✅ Staff can talk in locked channels',
+        value='✅ Anti-Nuke | ✅ Anti-Raid | ✅ Anti-Spam\n✅ Auto Verification | ✅ Staff can talk in locked channels',
         inline=False
     )
     
@@ -1082,12 +1063,34 @@ async def help_cmd(ctx):
 
 @bot.tree.command(name="help_security", description="View all bot commands")
 async def help_security(interaction: discord.Interaction):
-    """Slash command help"""
     await interaction.response.send_message('📖 Use `+help` to see all commands!', ephemeral=True)
-  File "/opt/render/project/src/main.py", line 1213
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                  ^
-SyntaxError: invalid decimal literal value=member.nick or 'None', inline=True)
+
+# ============================================
+# UTILITY COMMANDS
+# ============================================
+
+@bot.command(name='ping')
+async def ping_cmd(ctx):
+    await ctx.send(f'🏓 Pong! `{round(bot.latency * 1000)}ms`')
+
+@bot.command(name='serverinfo')
+async def serverinfo_cmd(ctx):
+    guild = ctx.guild
+    embed = discord.Embed(title=f'📊 {guild.name}', color=discord.Color.blue())
+    embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
+    embed.add_field(name='Members', value=guild.member_count, inline=True)
+    embed.add_field(name='Roles', value=len(guild.roles), inline=True)
+    embed.add_field(name='Channels', value=len(guild.channels), inline=True)
+    embed.add_field(name='Created', value=guild.created_at.strftime('%Y-%m-%d'), inline=True)
+    await ctx.send(embed=embed)
+
+@bot.command(name='userinfo')
+async def userinfo_cmd(ctx, member: discord.Member = None):
+    member = member or ctx.author
+    embed = discord.Embed(title=f'👤 {member.name}', color=member.color)
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.add_field(name='ID', value=member.id, inline=True)
+    embed.add_field(name='Nickname', value=member.nick or 'None', inline=True)
     embed.add_field(name='Status', value=str(member.status), inline=True)
     embed.add_field(name='Joined', value=member.joined_at.strftime('%Y-%m-%d'), inline=True)
     embed.add_field(name='Created', value=member.created_at.strftime('%Y-%m-%d'), inline=True)
@@ -1096,7 +1099,6 @@ SyntaxError: invalid decimal literal value=member.nick or 'None', inline=True)
 
 @bot.command(name='avatar')
 async def avatar_cmd(ctx, member: discord.Member = None):
-    """Display user avatar"""
     member = member or ctx.author
     embed = discord.Embed(title=f'🖼️ {member.display_name}\'s Avatar', color=member.color)
     embed.set_image(url=member.display_avatar.url)
@@ -1104,7 +1106,6 @@ async def avatar_cmd(ctx, member: discord.Member = None):
 
 @bot.command(name='botinfo')
 async def botinfo_cmd(ctx):
-    """Display bot information"""
     embed = discord.Embed(title=f'🤖 {bot.user.name}', description='Advanced Security Bot', color=discord.Color.blue())
     embed.set_thumbnail(url=bot.user.display_avatar.url)
     embed.add_field(name='Servers', value=len(bot.guilds), inline=True)
@@ -1118,7 +1119,6 @@ async def botinfo_cmd(ctx):
 @bot.tree.command(name="security_status", description="View bot status (Owner only)")
 @is_owner()
 async def security_status(interaction: discord.Interaction):
-    """Display security bot statistics"""
     total_violations = sum(data_manager.user_violations.values())
     users_with_violations = len(data_manager.user_violations)
     
@@ -1189,8 +1189,6 @@ async def main():
     except Exception as e:
         print(f'Bot error: {e}')
         await bot.close()
-
-# bot code run
 
 if __name__ == '__main__':
     print('=' * 70)
