@@ -868,32 +868,30 @@ async def unlockdown_cmd(ctx):
         await ctx.send(f'❌ Error: {e}')
 
 
-@bot.command(name='antiraid')
+  @bot.command(name='antiraid')
 @is_owner_or_admin()
 async def antiraid_cmd(ctx, mode: str):
     """Enable/disable anti-raid (on/off)"""
     if mode.lower() == 'on':
         try:
             await ctx.guild.edit(
-                verification_level=discord.VerificationLevel.high,
-                default_message_notifications=discord.NotificationLevel.only_mentions
+                verification_level=discord.VerificationLevel.high
             )
-            await ctx.send('🛡️ **Anti-Raid Mode: ON**\n✅ Verification set to HIGH\n✅ Notifications limited')
+            await ctx.send('🛡️ **Anti-Raid Mode: ON**\n✅ Verification set to HIGH')
             await log_action(ctx.guild, '🛡️ Anti-Raid ON', f'Enabled by {ctx.author.mention}', discord.Color.green())
         except Exception as e:
             await ctx.send(f'❌ Error: {e}')
     elif mode.lower() == 'off':
         try:
             await ctx.guild.edit(
-                verification_level=discord.VerificationLevel.low,
-                default_message_notifications=discord.NotificationLevel.all_messages
+                verification_level=discord.VerificationLevel.low
             )
-            await ctx.send('✅ **Anti-Raid Mode: OFF**\n✅ Verification restored\n✅ Notifications restored')
+            await ctx.send('✅ **Anti-Raid Mode: OFF**\n✅ Verification restored')
             await log_action(ctx.guild, '🔓 Anti-Raid OFF', f'Disabled by {ctx.author.mention}', discord.Color.blue())
         except Exception as e:
             await ctx.send(f'❌ Error: {e}')
     else:
-        await ctx.send('❌ Use `+antiraid on` or `+antiraid off`')
+        await ctx.send('❌ Use `+antiraid on` or `+antiraid off`')  await msg.edit(content=f'✅ Added {role.mention} to {added} members')
 
 
 @bot.command(name='roleall')
@@ -911,7 +909,6 @@ async def roleall_cmd(ctx, role: discord.Role):
             except:
                 pass
     
-    await msg.edit(content=f'✅ Added {role.mention} to {added} members')
 
 @bot.command(name='unroleall')
 @is_owner_or_admin()
