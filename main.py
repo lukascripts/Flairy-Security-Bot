@@ -1201,7 +1201,7 @@ async def start_keep_alive():
         return web.Response(text='🛡️ Security Bot Online!', status=200)
     
     async def status_page(request):
-        html = f"""
+        html = """
         <!DOCTYPE html>
         <html>
         <head>
@@ -1246,16 +1246,23 @@ async def start_keep_alive():
                 <div class="status">✅ ONLINE - 24/7</div>
                 <p>Advanced Protection System</p>
                 <div class="info">
-                    <p><strong>Servers:</strong> {len(bot.guilds)}</p>
-                    <p><strong>Latency:</strong> {round(bot.latency * 1000)}ms</p>
-                    <p><strong>Prefix:</strong> {Config.PREFIX}</p>
+                    <p><strong>Servers:</strong> {servers}</p>
+                    <p><strong>Latency:</strong> {latency}ms</p>
+                    <p><strong>Prefix:</strong> {prefix}</p
                     <p><strong>Platform:</strong> Render</p>
                 </div>
             </div>
         </body>
         </html>
         """
-        return web.Response(text=html, content_type='text/html')
+        return web.Response(
+    text=html.format(
+        servers=len(bot.guilds),
+        latency=round(bot.latency * 1000),
+        prefix=Config.PREFIX
+    ),
+    content_type='text/html'
+    )
     
     app = web.Application()
     app.router.add_get('/', status_page)
