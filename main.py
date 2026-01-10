@@ -1084,44 +1084,10 @@ async def help_cmd(ctx):
 async def help_security(interaction: discord.Interaction):
     """Slash command help"""
     await interaction.response.send_message('📖 Use `+help` to see all commands!', ephemeral=True)
-
-# ============================================
-# UTILITY COMMANDS
-# ============================================
-
-@bot.command(name='ping')
-async def ping_cmd(ctx):
-    """Check bot latency"""
-    latency = round(bot.latency * 1000)
-    embed = discord.Embed(
-        title='🏓 Pong!',
-        description=f'**Latency:** {latency}ms\n**Status:** {"🟢 Excellent" if latency < 100 else "🟡 Good" if latency < 200 else "🔴 Slow"}',
-        color=discord.Color.green()
-    )
-    await ctx.send(embed=embed)
-
-@bot.command(name='serverinfo')
-async def serverinfo_cmd(ctx):
-    """Display server information"""
-    guild = ctx.guild
-    embed = discord.Embed(title=f'📊 {guild.name}', color=discord.Color.blue())
-    embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
-    embed.add_field(name='👑 Owner', value=guild.owner.mention, inline=True)
-    embed.add_field(name='👥 Members', value=guild.member_count, inline=True)
-    embed.add_field(name='💬 Channels', value=len(guild.channels), inline=True)
-    embed.add_field(name='🎭 Roles', value=len(guild.roles), inline=True)
-    embed.add_field(name='📅 Created', value=guild.created_at.strftime('%Y-%m-%d'), inline=True)
-    embed.add_field(name='🔒 Verification', value=str(guild.verification_level), inline=True)
-    await ctx.send(embed=embed)
-
-@bot.command(name='userinfo')
-async def userinfo_cmd(ctx, member: discord.Member = None):
-    """Display user information"""
-    member = member or ctx.author
-    embed = discord.Embed(title=f'👤 {member}', color=member.color)
-    embed.set_thumbnail(url=member.display_avatar.url)
-    embed.add_field(name='ID', value=member.id, inline=True)
-    embed.add_field(name='Nickname', value=member.nick or 'None', inline=True)
+  File "/opt/render/project/src/main.py", line 1213
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                  ^
+SyntaxError: invalid decimal literal value=member.nick or 'None', inline=True)
     embed.add_field(name='Status', value=str(member.status), inline=True)
     embed.add_field(name='Joined', value=member.joined_at.strftime('%Y-%m-%d'), inline=True)
     embed.add_field(name='Created', value=member.created_at.strftime('%Y-%m-%d'), inline=True)
@@ -1248,7 +1214,7 @@ async def start_keep_alive():
                 <div class="info">
                     <p><strong>Servers:</strong> {servers}</p>
                     <p><strong>Latency:</strong> {latency}ms</p>
-                    <p><strong>Prefix:</strong> {prefix}</p
+                    <p><strong>Prefix:</strong> {prefix}</p>
                     <p><strong>Platform:</strong> Render</p>
                 </div>
             </div>
