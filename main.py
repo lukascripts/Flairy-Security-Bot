@@ -730,7 +730,7 @@ async def verify_user(interaction: discord.Interaction, member: discord.Member):
             ephemeral=True
       )
 
-  """
+"""
 Elite Discord Security Bot - Part 3: Anti-Nuke Protection
 Add this after Part 2
 """
@@ -1046,7 +1046,7 @@ async def on_webhooks_update(channel: discord.TextChannel):
         )
         break
 
-  """
+"""
 Elite Discord Security Bot - Part 4: Auto-Moderation System
 Add this after Part 3
 """
@@ -1627,7 +1627,7 @@ async def slowmode_cmd(ctx, seconds: int):
     except Exception as e:
         await ctx.send(f'Failed to set slowmode: {e}')
 
-  """
+"""
 Elite Discord Security Bot - Part 6: Advanced Commands
 Add this after Part 5
 """
@@ -2568,7 +2568,7 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
         except:
             pass
 
-      """
+"""
 Elite Discord Security Bot - Part 9: Web Server & Main Run
 Add this after Part 8 - FINAL PART
 """
