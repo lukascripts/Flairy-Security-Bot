@@ -1,4 +1,40 @@
-"""
+# Main Function
+async def main():
+    """Main bot startup function"""
+    # Start the web server (keep_alive)
+    await start_keep_alive()
+    
+    # Use 'async with' to properly manage the bot's session lifecycle
+    async with bot:
+        try:
+            await bot.start(Config.TOKEN)
+        except Exception as e:
+            logging.error(f'Bot error: {e}')
+        finally:
+            # Ensure the bot closes cleanly if it isn't already
+            if not bot.is_closed():
+                await bot.close()
+
+# Run Bot
+if __name__ == '__main__':
+    # Print diagnostic info for you to verify on startup
+    print('=' * 70)
+    print('ELITE DISCORD SECURITY BOT')
+    print('=' * 70)
+    print(f'Owner ID: {Config.OWNER_ID}')
+    print(f'Prefix:   {Config.PREFIX}')
+    print(f'Port:     {Config.PORT}')
+    print('=' * 70)
+    
+    if not Config.TOKEN:
+        logging.error('DISCORD_BOT_TOKEN not found in environment!')
+    else:
+        try:
+            # Replaces bot.run() for better control in modern discord.py
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            # Silences the messy error when you press Ctrl+C
+            pass"""
 Elite Discord Security Bot - Part 1: Core Setup & Configuration
 Production-Grade Security System
 """
@@ -2697,26 +2733,40 @@ async def main():
         logging.error(f'Bot error: {e}')
         await bot.close()
 
+# Main Function
+async def main():
+    """Main bot startup function"""
+    # Start the web server (keep_alive)
+    await start_keep_alive()
+    
+    # Use 'async with' to properly manage the bot's session lifecycle
+    async with bot:
+        try:
+            await bot.start(Config.TOKEN)
+        except Exception as e:
+            logging.error(f'Bot error: {e}')
+        finally:
+            # Ensure the bot closes cleanly if it isn't already
+            if not bot.is_closed():
+                await bot.close()
+
 # Run Bot
 if __name__ == '__main__':
+    # Print diagnostic info for you to verify on startup
     print('=' * 70)
     print('ELITE DISCORD SECURITY BOT')
     print('=' * 70)
     print(f'Owner ID: {Config.OWNER_ID}')
-    print(f'Prefix: {Config.PREFIX}')
-    print(f'Port: {Config.PORT}')
+    print(f'Prefix:   {Config.PREFIX}')
+    print(f'Port:     {Config.PORT}')
     print('=' * 70)
     
     if not Config.TOKEN:
-        logging.error('DISCORD_BOT_TOKEN not set in environment variables!')
-        print('\nERROR: DISCORD_BOT_TOKEN not found!')
-        print('Please set it in your environment variables or .env file')
-        exit(1)
-    
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        logging.info('Bot stopped by user')
-    except Exception as e:
-        logging.error(f'Failed to start bot: {e}')
-        print(f'\nFailed to start: {e}')
+        logging.error('DISCORD_BOT_TOKEN not found in environment!')
+    else:
+        try:
+            # Replaces bot.run() for better control in modern discord.py
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            # Silences the messy error when you press Ctrl+C
+            pass
