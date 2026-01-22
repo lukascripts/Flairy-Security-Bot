@@ -1,8 +1,0 @@
-.env
-.env.local
-security_data.json
-*.log
-__pycache__/
-*.pyc
-venv/
-.DS_Store
