@@ -311,7 +311,7 @@ class Bot(commands.Bot):
         if self.session:
             await self.session.close()
         if self.db:
-            await self.db.close(
+            await self.db.close()
 
 class HelpPaginator(discord.ui.View):
     def __init__(self, ctx, embeds):
