@@ -627,7 +627,6 @@ async def check_automod(content: str) -> bool:
 
 
 """ALL MODERATION COMMANDS"""
-from main import *
 
 @bot.command(name="kick")
 @commands.has_permissions(kick_members=True)
@@ -1557,13 +1556,6 @@ Add this code at the END after all imports
 """
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
-
-from main import *
-import events
-import moderation
-import ai_commands
-import all_commands
-import anti_systems
 
 # Web server for UptimeRobot (24/7 uptime)
 from aiohttp import web
