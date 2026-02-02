@@ -262,9 +262,6 @@ async def on_ready():
     
     await load_all_configs()
     
-    activity = discord.Activity(type=discord.ActivityType.watching, name=f"{BOT_PREFIX}help | 91+ Commands")
-    await bot.change_presence(activity=activity, status=discord.Status.online)
-    
     logger.info(f"✅ Bot ready: {bot.user.name}")
     logger.info(f"📊 Servers: {len(bot.guilds)} | Users: {len(bot.users)}")
     logger.info(f"🎮 Commands: {len(bot.commands)}")
@@ -757,7 +754,6 @@ async def role_remove(ctx, member: discord.Member, role: discord.Role):
 
 
 """AI COMMANDS - 25 Personalities + Auto-Response"""
-from main import *
 
 async def call_claude_api(messages, personality):
     try:
@@ -770,7 +766,7 @@ async def call_claude_api(messages, personality):
         return response.content[0].text
     except: return "❌ AI Error!"
 
-@bot.command(name="Aichat", aliases=["chat", "ask", "claude"])
+@bot.command(name="Aichhat", aliases=["chat", "ask", "claude"])
 async def ai(ctx, *, message: str = None):
     """Chat with Claude AI"""
     if not message: return await send_embed(ctx, "🤖 Claude AI", f"Use `{BOT_PREFIX}ai <message>` to chat!\n`{BOT_PREFIX}personalities` to see all personalities", discord.Color.blue())
