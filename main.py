@@ -1144,7 +1144,7 @@ from main import *
 
 # ========== ANTI-ALT SYSTEM ==========
 
-@bot.group(name="antialt1", invoke_without_command=True)
+@bot.group(name="aalt", invoke_without_command=True)
 @is_owner()
 async def antialt(ctx):
     """Anti-alt detection system"""
