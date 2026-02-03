@@ -1470,7 +1470,7 @@ async def bot_info(ctx):
 
 # ==================== UTILITY COMMANDS (PART 5) ====================
 
-@bot.command(name="skin", aliases=["avatar", "pfp"])
+@bot.command(name="skin", aliases=["skinav", "pfp"])
 async def avatar(ctx, member: discord.Member = None):
     target = member or ctx.author
     embed = discord.Embed(title=f"{target.name}'s Avatar", color=discord.Color.blue())
