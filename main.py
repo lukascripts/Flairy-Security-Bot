@@ -1479,7 +1479,7 @@ async def avatar(ctx, member: discord.Member = None):
     embed.add_field(name="Download", value=f"[Click Here]({avatar_url})")
     await ctx.send(embed=embed)
 
-@bot.command(name="sav", aliases=["serveravatar", "servericon"])
+@bot.command(name="spfp", aliases=["serverpfp", "pfpserver"])
 async def server_avatar(ctx):
     if not ctx.guild.icon:
         return await send_embed(ctx, "❌ No Icon", "No server icon!", discord.Color.red())
