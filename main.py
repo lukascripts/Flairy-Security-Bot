@@ -1487,7 +1487,7 @@ async def server_avatar(ctx):
     embed.set_image(url=ctx.guild.icon.url)
     await ctx.send(embed=embed)
 
-@bot.command(name="si", aliases=["serverinfo"])
+@bot.command(name="is", aliases=["infoserver"])
 async def server_info(ctx):
     g = ctx.guild
     embed = discord.Embed(title=f"📊 {g.name}", color=discord.Color.blue())
@@ -1497,7 +1497,7 @@ async def server_info(ctx):
     embed.add_field(name="Channels", value=f"{len(g.channels)}", inline=True)
     await ctx.send(embed=embed)
 
-@bot.command(name="ui", aliases=["userinfo", "whois"])
+@bot.command(name="iu", aliases=["infouser", "whois"])
 async def user_info(ctx, member: discord.Member = None):
     target = member or ctx.author
     embed = discord.Embed(title=f"👤 {target.name}", color=target.color)
