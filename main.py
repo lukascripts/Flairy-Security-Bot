@@ -819,7 +819,7 @@ async def antinuke_status(ctx):
     
     await ctx.send(embed=embed)
 
- ========== AI AUTOMOD ==========
+ # ========== AI AUTOMOD ==========
 
 @bot.group(name="automod", invoke_without_command=True)
 @is_owner()
