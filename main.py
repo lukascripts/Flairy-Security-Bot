@@ -1497,7 +1497,7 @@ async def server_info(ctx):
     embed.add_field(name="Channels", value=f"{len(g.channels)}", inline=True)
     await ctx.send(embed=embed)
 
-@bot.command(name="iu", aliases=["infouser", "whois"])
+@bot.command(name="iu", aliases=["infouser", "aboutuser"])
 async def user_info(ctx, member: discord.Member = None):
     target = member or ctx.author
     embed = discord.Embed(title=f"👤 {target.name}", color=target.color)
