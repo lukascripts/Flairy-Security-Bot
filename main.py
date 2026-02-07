@@ -1711,4 +1711,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logger.info("⚠️ Bot shutdown by user")
     except Exception as e:
-        logger.error(f"❌ FATAL: {e}"
+        logger.error(f"❌ FATAL: {e}")
