@@ -221,32 +221,37 @@ def format_time(td: timedelta) -> str:
     else: return f"{seconds//86400}d"
 
 async def call_claude_api(messages, personality):
-    """FIXED - WORKS WITH ANY ANTHROPIC VERSION!"""
+    """FIXED - WORKS WITH OLD ANTHROPIC!"""
     try:
-        import anthropic
-        if not config.ANTHROPIC_KEY: return "⚠️ AI not configured!"
+        from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
         
-        # Try new version first, fallback to old
-        try:
-            client = anthropic.Anthropic(api_key=config.ANTHROPIC_KEY)
-        except TypeError:
-            # Old version - use different method
-            import anthropic as old_anthropic
-            old_anthropic.api_key = config.ANTHROPIC_KEY
-            client = old_anthropic
+        if not config.ANTHROPIC_KEY: 
+            return "⚠️ AI not configured!"
         
+        client = Anthropic(api_key=config.ANTHROPIC_KEY)
         p = AI_PERSONALITIES.get(personality, AI_PERSONALITIES["friendly"])
-        if len(messages) > 20: messages = messages[-20:]
         
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1000,
+        if len(messages) > 20: 
+            messages = messages[-20:]
+        
+        # Convert messages to old format
+        prompt = p["prompt"] + "\n\n"
+        for msg in messages:
+            if msg["role"] == "user":
+                prompt += f"{HUMAN_PROMPT} {msg['content']}\n"
+            else:
+                prompt += f"{AI_PROMPT} {msg['content']}\n"
+        prompt += AI_PROMPT
+        
+        response = client.completions.create(
+            model="claude-2.1",
+            max_tokens_to_sample=1000,
             temperature=0.7,
-            system=p["prompt"],
-            messages=messages
+            prompt=prompt
         )
         
-        return response.content[0].text
+        return response.completion
+        
     except Exception as e:
         logger.error(f"AI Error: {e}")
         return f"❌ AI Error: {str(e)[:100]}"
