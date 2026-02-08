@@ -225,7 +225,10 @@ async def call_claude_api(messages, personality):
     try:
         import anthropic
         if not config.ANTHROPIC_KEY: return "⚠️ AI not configured!"
-        client = anthropic.Anthropic(api_key=config.ANTHROPIC_KEY)
+        client = anthropic.Anthropic(
+                api_key=config.ANTHROPIC_KEY,
+                http_client=None
+              )
         p = AI_PERSONALITIES.get(personality, AI_PERSONALITIES["friendly"])
         if len(messages) > 20: messages = messages[-20:]
         response = client.messages.create(model="claude-sonnet-4-20250514", max_tokens=1000, temperature=0.7, system=p["prompt"], messages=messages)
