@@ -1631,61 +1631,6 @@ async def antispam_status(ctx):
     embed.add_field(name="Action", value=antispam_config.get("action", "mute"), inline=True)
     await ctx.send(embed=embed)
 
-
-# ==================== ANTI-SPAM SYSTEM ====================
-@bot.group(name="antispam", invoke_without_command=True)
-@commands.has_permissions(administrator=True)
-async def antispam(ctx):
-    await send_embed(ctx, "🛡️ Anti-Spam", f"`{config.PREFIX}antispam enable/disable/messages/time/action/ignore/whitelist/status`", discord.Color.blue())
-
-@antispam.command(name="enable")
-async def antispam_enable(ctx):
-    antispam_config["enabled"] = True
-    await send_embed(ctx, "✅ Anti-Spam Enabled", "Monitoring message spam!", discord.Color.green())
-
-@antispam.command(name="disable")
-async def antispam_disable(ctx):
-    antispam_config["enabled"] = False
-    await send_embed(ctx, "❌ Anti-Spam Disabled", "Not monitoring spam!", discord.Color.red())
-
-@antispam.command(name="messages")
-async def antispam_messages(ctx, amount: int):
-    antispam_config["max_messages"] = amount
-    await send_embed(ctx, "✅ Max Messages Set", f"Max **{amount}** messages in timeframe!", discord.Color.green())
-
-@antispam.command(name="time")
-async def antispam_time(ctx, seconds: int):
-    antispam_config["timeframe"] = seconds
-    await send_embed(ctx, "✅ Timeframe Set", f"Timeframe: **{seconds}** seconds!", discord.Color.green())
-
-@antispam.command(name="action")
-async def antispam_action(ctx, action: str):
-    if action.lower() not in ["mute", "kick", "ban"]:
-        return await send_embed(ctx, "❌ Invalid", "Use: mute, kick, or ban", discord.Color.red())
-    antispam_config["action"] = action.lower()
-    await send_embed(ctx, "✅ Action Set", f"Spammers will be **{action}**ed!", discord.Color.green())
-
-@antispam.command(name="ignore")
-async def antispam_ignore(ctx, channel: discord.TextChannel):
-    if channel.id not in antispam_config["ignored_channels"]:
-        antispam_config["ignored_channels"].append(channel.id)
-    await send_embed(ctx, "✅ Channel Ignored", f"{channel.mention} exempt from spam detection!", discord.Color.green())
-@antispam.command(name="whitelist")
-async def antispam_whitelist(ctx, role: discord.Role):
-    if role.id not in antispam_config["whitelisted_roles"]:
-        antispam_config["whitelisted_roles"].append(role.id)
-    await send_embed(ctx, "✅ Role Whitelisted", f"{role.mention} exempt from spam detection!", discord.Color.green())
-
-@antispam.command(name="status")
-async def antispam_status(ctx):
-    status = "Enabled ✅" if antispam_config.get("enabled") else "Disabled ❌"
-    embed = discord.Embed(title="🛡️ Anti-Spam Status", color=discord.Color.blue())
-    embed.add_field(name="Status", value=status, inline=False)
-    embed.add_field(name="Max Messages", value=antispam_config.get("max_messages", 5), inline=True)
-    embed.add_field(name="Timeframe", value=f"{antispam_config.get('timeframe', 3)}s", inline=True)
-    embed.add_field(name="Action", value=antispam_config.get("action", "mute"), inline=True)
-    await ctx.send(embed=embed)
-
 # UPDATE INVITES COMMANDS WITH VERIFICATION STATUS
 # (Replace the existing invites and invited commands with these enhanced versions)
 
