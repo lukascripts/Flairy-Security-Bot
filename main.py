@@ -221,17 +221,31 @@ def format_time(td: timedelta) -> str:
     else: return f"{seconds//86400}d"
 
 async def call_claude_api(messages, personality):
-    """FIXED - NO PROXIES ERROR!"""
+    """FIXED - WORKS WITH ANY ANTHROPIC VERSION!"""
     try:
         import anthropic
         if not config.ANTHROPIC_KEY: return "⚠️ AI not configured!"
-        client = anthropic.Anthropic(
-                api_key=config.ANTHROPIC_KEY,
-                http_client=None
-              )
+        
+        # Try new version first, fallback to old
+        try:
+            client = anthropic.Anthropic(api_key=config.ANTHROPIC_KEY)
+        except TypeError:
+            # Old version - use different method
+            import anthropic as old_anthropic
+            old_anthropic.api_key = config.ANTHROPIC_KEY
+            client = old_anthropic
+        
         p = AI_PERSONALITIES.get(personality, AI_PERSONALITIES["friendly"])
         if len(messages) > 20: messages = messages[-20:]
-        response = client.messages.create(model="claude-sonnet-4-20250514", max_tokens=1000, temperature=0.7, system=p["prompt"], messages=messages)
+        
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1000,
+            temperature=0.7,
+            system=p["prompt"],
+            messages=messages
+        )
+        
         return response.content[0].text
     except Exception as e:
         logger.error(f"AI Error: {e}")
