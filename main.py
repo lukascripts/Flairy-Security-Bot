@@ -1565,17 +1565,6 @@ class HelpView(View):
                 )
             },
             {
-                "title": "💬 AI Chat (10 commands + 25 personalities)",
-                "description": (
-                    f"`{config.PREFIX}ai <message>` - Chat with AI\n"
-                    f"`{config.PREFIX}aimood <personality>` - Change mood\n"
-                    f"`{config.PREFIX}personalities` - List all 25 moods\n"
-                    f"`{config.PREFIX}aiclear` - Clear chat history\n"
-                    f"`{config.PREFIX}aichannel #channel` - Auto-response\n\n"
-                    f"**Personalities:** friendly, professional, sassy, mean, cool, nerdy, gamer, pirate, uwu, gen-z, robot, chaotic, wholesome, motivational, tsundere, shakespearean, detective, zen, comedic, karen, creative, casual, wise, enthusiastic, technical"
-                )
-            },
-            {
                 "title": "🛡️ Anti-Systems (35 commands)",
                 "description": (
                     f"**Anti-Alt:** enable, disable, minage, action, status\n"
@@ -1640,7 +1629,7 @@ class HelpView(View):
     
     async def update_message(self, interaction):
         embed = discord.Embed(title=self.pages[self.page]["title"], description=self.pages[self.page]["description"], color=discord.Color.blue())
-        embed.set_footer(text=f"Page {self.page + 1}/{len(self.pages)} • Total: 133+ commands")
+        embed.set_footer(text=f"Page {self.page + 1}/{len(self.pages)} • Total: 100+ commands")
         await interaction.response.edit_message(embed=embed, view=self)
     
     @discord.ui.button(label="◀️ Previous", style=discord.ButtonStyle.gray)
