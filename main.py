@@ -1571,8 +1571,7 @@ class HelpView(View):
                     f"**Anti-Raid:** enable, disable, sensitivity, status, lockdown, unlockdown\n"
                     f"**Anti-Link:** enable, disable, whitelist, bypass (add/remove/list), status\n"
                     f"**Anti-Nuke:** enable, disable, whitelist, unwhitelist, status\n"
-                    f"**Anti-Spam:** enable, disable, messages, time, action, ignore, whitelist, status\n"
-                    f"**AI Automod:** enable, disable, sensitivity, action, ignore, whitelist, status"
+                    f"**Anti-Spam:** enable, disable, messages, time, action, ignore, whitelist, status"
                 )
             },
             {
@@ -1646,7 +1645,7 @@ class HelpView(View):
 async def help_cmd(ctx):
     view = HelpView()
     embed = discord.Embed(title=view.pages[0]["title"], description=view.pages[0]["description"], color=discord.Color.blue())
-    embed.set_footer(text=f"Page 1/{len(view.pages)} • Total: 133+ commands")
+    embed.set_footer(text=f"Page 1/{len(view.pages)} • Total: 100+ commands")
     await ctx.send(embed=embed, view=view)
 
 # BOT STARTUP
