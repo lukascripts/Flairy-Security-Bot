@@ -400,45 +400,6 @@ async def on_message(message):
                 except: pass
     
     # AI auto-response
-    if ai_config.get("enabled") and ai_config.get("channel_id") == message.channel.id:
-        if any(w in message.content.lower() for w in ["invite", "invites", "leaderboard"]):
-            try:
-                if "leaderboard" in message.content.lower():
-                    lb = await db_manager.get_leaderboard(message.guild.id, 5)
-                    resp = "📊 **Top Inviters:**\n" + "\n".join([f"{i}. {message.guild.get_member(r['inviter_id']).mention if message.guild.get_member(r['inviter_id']) else 'Unknown'}: **{r['real']}**" for i, r in enumerate(lb, 1)])
-                    await message.reply(resp, mention_author=False); return
-                else:
-                    stats = await db_manager.get_invites(message.author.id, message.guild.id)
-                    users = await db_manager.get_invited_users(message.author.id, message.guild.id)
-                    resp = f"📊 **Stats:** Total: **{stats['total']}** | Real: **{stats['real']}** | Left: {stats['left']} | Fake: {stats['fake']} | Rejoin: {stats['rejoin']}\n\n"
-                    if users:
-                        resp += "**Invited:**\n"
-                        for i, row in enumerate(users[:10], 1):
-                            m = message.guild.get_member(row['user_id'])
-                            if m:
-                                verified = "✅" if config.VERIFIED_ROLE_ID and any(r.id == config.VERIFIED_ROLE_ID for r in m.roles) else "❌"
-                                itype = "FAKE" if row['is_fake'] else "REJOIN" if row['is_rejoin'] else "LEFT" if row['left_at'] else "REAL"
-                                resp += f"{i}. {m.mention} ({itype}) {verified}\n"
-                    await message.reply(resp, mention_author=False); return
-            except: pass
-        
-        async with message.channel.typing():
-            conv = ai_conversations[message.author.id]
-            conv["messages"].append({"role": "user", "content": message.content})
-            if len(conv["messages"]) > 30: conv["messages"] = conv["messages"][-30:]
-            try:
-                resp = await call_claude_api(conv["messages"], conv["personality"])
-                conv["messages"].append({"role": "assistant", "content": resp})
-                await message.reply(resp, mention_author=False)
-            except: pass
-    
-    # Anti-link
-    if antilink_config.get("enabled") and not is_staff(message.author):
-        if not (any(r.id in antilink_config.get("bypass_roles", []) for r in message.author.roles) or message.author.id in antilink_config.get("bypass_users", [])):
-            if re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.content):
-                try: await message.delete(); await message.channel.send(f"{message.author.mention} Links not allowed!", delete_after=5)
-                except: pass
-    
     await bot.process_commands(message)
 
 @bot.event
@@ -822,42 +783,6 @@ async def role_remove(ctx, member: discord.Member, role: discord.Role):
 # PASTE AFTER PART 3
 
 # AI COMMANDS
-async def ai_cmd(ctx, *, message: str):
-    async with ctx.typing():
-        conv = ai_conversations[ctx.author.id]
-        conv["messages"].append({"role": "user", "content": message})
-        if len(conv["messages"]) > 30: conv["messages"] = conv["messages"][-30:]
-        resp = await call_claude_api(conv["messages"], conv["personality"])
-        conv["messages"].append({"role": "assistant", "content": resp})
-        await ctx.reply(resp, mention_author=False)
-
-async def aimood_cmd(ctx, mood: str):
-    if mood.lower() not in AI_PERSONALITIES:
-        return await send_embed(ctx, "❌ Invalid", "Available: " + ", ".join(AI_PERSONALITIES.keys()), discord.Color.red())
-    ai_conversations[ctx.author.id]["personality"] = mood.lower()
-    p = AI_PERSONALITIES[mood.lower()]
-    await send_embed(ctx, f"{p['emoji']} Mood Changed", f"AI is now **{p['name']}**!", discord.Color.green())
-
-async def personalities_cmd(ctx):
-    embed = discord.Embed(title="🎭 AI Personalities", color=discord.Color.blue())
-    desc = "\n".join([f"{p['emoji']} **{p['name']}** - `{k}`" for k, p in AI_PERSONALITIES.items()])
-    embed.description = desc
-    await ctx.send(embed=embed)
-
-async def aiclear_cmd(ctx):
-    ai_conversations[ctx.author.id]["messages"] = []
-    await send_embed(ctx, "✅ Cleared", "Chat history reset!", discord.Color.green())
-
-async def aichannel_cmd(ctx, channel: discord.TextChannel = None):
-    if channel is None or channel.mention == "disable":
-        ai_config["enabled"] = False
-        ai_config["channel_id"] = None
-        return await send_embed(ctx, "❌ Disabled", "Auto-response off!", discord.Color.red())
-    ai_config["channel_id"] = channel.id
-    ai_config["enabled"] = True
-    await send_embed(ctx, "✅ AI Channel", f"Auto-response in {channel.mention}!", discord.Color.green())
-
-# PERMISSION SYSTEM
 @bot.group(name="perm", invoke_without_command=True)
 @commands.has_permissions(administrator=True)
 async def perm_cmd(ctx):
