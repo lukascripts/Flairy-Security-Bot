@@ -69,8 +69,6 @@ bot = commands.Bot(command_prefix=lambda bot, message: config.PREFIX, intents=in
 
 whitelist_data = {"commands": {}}
 permission_data = {"commands": {}}
-ai_config = {"channel_id": None, "enabled": False}
-ai_conversations = defaultdict(lambda: {"messages": [], "personality": "friendly", "created_at": datetime.utcnow()})
 antiraid_config = {"enabled": False, "sensitivity": "medium", "joins": defaultdict(list)}
 antialt_config = {"enabled": False, "min_age_days": 7, "action": "kick"}
 antilink_config = {"enabled": False, "whitelist_domains": [], "bypass_roles": [], "bypass_users": [], "action": "delete"}
@@ -82,33 +80,6 @@ message_tracker = defaultdict(int)
 db_pool = None
 db_manager = None
 
-AI_PERSONALITIES = {
-    "friendly": {"name": "Friendly", "emoji": "😊", "prompt": "You are warm and friendly."},
-    "professional": {"name": "Professional", "emoji": "💼", "prompt": "You are professional."},
-    "sassy": {"name": "Sassy", "emoji": "💅", "prompt": "You are sassy!"},
-    "mean": {"name": "Mean", "emoji": "😈", "prompt": "You roast users!"},
-    "cool": {"name": "Cool", "emoji": "😎", "prompt": "You're cool."},
-    "nerdy": {"name": "Nerdy", "emoji": "🤓", "prompt": "You're a nerd!"},
-    "gamer": {"name": "Gamer", "emoji": "🎮", "prompt": "You're a gamer!"},
-    "pirate": {"name": "Pirate", "emoji": "🏴‍☠️", "prompt": "Ye be a pirate!"},
-    "uwu": {"name": "UwU", "emoji": "🥺", "prompt": "You awe cute UwU!"},
-    "gen-z": {"name": "Gen-Z", "emoji": "✨", "prompt": "You're Gen-Z!"},
-    "robot": {"name": "Robot", "emoji": "🤖", "prompt": "BEEP BOOP."},
-    "chaotic": {"name": "Chaotic", "emoji": "🌪️", "prompt": "CHAOS!"},
-    "wholesome": {"name": "Wholesome", "emoji": "🥰", "prompt": "Wholesome!"},
-    "motivational": {"name": "Motivational", "emoji": "💪", "prompt": "Motivate!"},
-    "tsundere": {"name": "Tsundere", "emoji": "😤", "prompt": "Tsundere!"},
-    "shakespearean": {"name": "Shakespeare", "emoji": "📜", "prompt": "Shakespeare!"},
-    "detective": {"name": "Detective", "emoji": "🔍", "prompt": "Detective!"},
-    "zen": {"name": "Zen", "emoji": "🧘", "prompt": "Zen."},
-    "comedic": {"name": "Comedian", "emoji": "😂", "prompt": "Comedian!"},
-    "karen": {"name": "Karen", "emoji": "😠", "prompt": "Karen!"},
-    "creative": {"name": "Creative", "emoji": "🎨", "prompt": "Creative!"},
-    "casual": {"name": "Casual", "emoji": "😌", "prompt": "Casual."},
-    "wise": {"name": "Wise", "emoji": "🧙", "prompt": "Wise."},
-    "enthusiastic": {"name": "Enthusiastic", "emoji": "🎉", "prompt": "Enthusiastic!"},
-    "technical": {"name": "Technical", "emoji": "🔧", "prompt": "Technical."}
-}
 
 class DatabaseManager:
     def __init__(self, pool):
@@ -219,42 +190,6 @@ def format_time(td: timedelta) -> str:
     elif seconds < 3600: return f"{seconds//60}m"
     elif seconds < 86400: return f"{seconds//3600}h"
     else: return f"{seconds//86400}d"
-
-async def call_claude_api(messages, personality):
-    """FIXED - WORKS WITH OLD ANTHROPIC!"""
-    try:
-        from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
-        
-        if not config.ANTHROPIC_KEY: 
-            return "⚠️ AI not configured!"
-        
-        client = Anthropic(api_key=config.ANTHROPIC_KEY)
-        p = AI_PERSONALITIES.get(personality, AI_PERSONALITIES["friendly"])
-        
-        if len(messages) > 20: 
-            messages = messages[-20:]
-        
-        # Convert messages to old format
-        prompt = p["prompt"] + "\n\n"
-        for msg in messages:
-            if msg["role"] == "user":
-                prompt += f"{HUMAN_PROMPT} {msg['content']}\n"
-            else:
-                prompt += f"{AI_PROMPT} {msg['content']}\n"
-        prompt += AI_PROMPT
-        
-        response = client.completions.create(
-            model="claude-2.1",
-            max_tokens_to_sample=1000,
-            temperature=0.7,
-            prompt=prompt
-        )
-        
-        return response.completion
-        
-    except Exception as e:
-        logger.error(f"AI Error: {e}")
-        return f"❌ AI Error: {str(e)[:100]}"
 
 def format_msg(template: str, user: discord.Member, inviter: Optional[discord.Member] = None, count: int = 0, invite_count: int = 0) -> str:
     return template.replace("{user}", user.mention).replace("{username}", user.name).replace("{servername}", user.guild.name).replace("{count}", str(count)).replace("{inviter}", inviter.mention if inviter else "Unknown").replace("{invites}", str(invite_count))
@@ -887,7 +822,6 @@ async def role_remove(ctx, member: discord.Member, role: discord.Role):
 # PASTE AFTER PART 3
 
 # AI COMMANDS
-@bot.command(name="ai", aliases=["chat", "ask", "claude"])
 async def ai_cmd(ctx, *, message: str):
     async with ctx.typing():
         conv = ai_conversations[ctx.author.id]
@@ -897,7 +831,6 @@ async def ai_cmd(ctx, *, message: str):
         conv["messages"].append({"role": "assistant", "content": resp})
         await ctx.reply(resp, mention_author=False)
 
-@bot.command(name="aimood", aliases=["personality", "setmood"])
 async def aimood_cmd(ctx, mood: str):
     if mood.lower() not in AI_PERSONALITIES:
         return await send_embed(ctx, "❌ Invalid", "Available: " + ", ".join(AI_PERSONALITIES.keys()), discord.Color.red())
@@ -905,20 +838,16 @@ async def aimood_cmd(ctx, mood: str):
     p = AI_PERSONALITIES[mood.lower()]
     await send_embed(ctx, f"{p['emoji']} Mood Changed", f"AI is now **{p['name']}**!", discord.Color.green())
 
-@bot.command(name="personalities", aliases=["moods"])
 async def personalities_cmd(ctx):
     embed = discord.Embed(title="🎭 AI Personalities", color=discord.Color.blue())
     desc = "\n".join([f"{p['emoji']} **{p['name']}** - `{k}`" for k, p in AI_PERSONALITIES.items()])
     embed.description = desc
     await ctx.send(embed=embed)
 
-@bot.command(name="aiclear", aliases=["chatclear"])
 async def aiclear_cmd(ctx):
     ai_conversations[ctx.author.id]["messages"] = []
     await send_embed(ctx, "✅ Cleared", "Chat history reset!", discord.Color.green())
 
-@bot.command(name="aichannel")
-@is_owner()
 async def aichannel_cmd(ctx, channel: discord.TextChannel = None):
     if channel is None or channel.mention == "disable":
         ai_config["enabled"] = False
@@ -1336,26 +1265,21 @@ async def automod_status(ctx):
 async def invites_cmd(ctx, user: discord.Member = None):
     target = user or ctx.author
     stats = await db_manager.get_invites(target.id, ctx.guild.id)
-    invited = await db_manager.get_invited_users(target.id, ctx.guild.id)
     
-    embed = discord.Embed(title=f"📊 {target.name}'s Invites", color=discord.Color.blue())
-    embed.add_field(name="Total", value=f"**{stats['total']}**", inline=True)
-    embed.add_field(name="Real", value=f"**{stats['real']}**", inline=True)
-    embed.add_field(name="Left", value=stats['left'], inline=True)
-    embed.add_field(name="Fake", value=stats['fake'], inline=True)
-    embed.add_field(name="Rejoin", value=stats['rejoin'], inline=True)
+    # FALCON STYLE EMBED (like screenshot)
+    embed = discord.Embed(
+        title="Invite log",
+        description=f"➡️ **{target.name} has {stats['total']} invites**\n\n"
+                    f"**Joins : {stats['total']}**\n"
+                    f"**Left : {stats['left']}**\n"
+                    f"**Fake : {stats['fake']}**\n"
+                    f"**Rejoins : {stats['rejoin']} ({config.FAKE_INVITE_DAYS}d)**",
+        color=discord.Color.blue()
+    )
     
-    if invited:
-        desc = "\n**Invited Users:**\n"
-        for i, row in enumerate(invited[:10], 1):
-            m = ctx.guild.get_member(row['user_id'])
-            if m:
-                verified = "✅" if config.VERIFIED_ROLE_ID and any(r.id == config.VERIFIED_ROLE_ID for r in m.roles) else "❌"
-                itype = "FAKE" if row['is_fake'] else "REJOIN" if row['is_rejoin'] else "LEFT" if row['left_at'] else "REAL"
-                desc += f"{i}. {m.mention} ({itype}) {verified}\n"
-        if len(invited) > 10:
-            desc += f"\n*...and {len(invited) - 10} more*"
-        embed.description = desc
+    embed.set_thumbnail(url=target.avatar.url if target.avatar else target.default_avatar.url)
+    embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
+    embed.timestamp = datetime.utcnow()
     
     await ctx.send(embed=embed)
 
